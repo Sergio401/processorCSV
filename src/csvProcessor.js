@@ -21,13 +21,17 @@ const readCSV = async () => {
       .pipe(csvParser({ separator: ';' }))
       .on('data', (row) => {
         const rawFilterColumn = row['raw_filter'];
+        row['raw_filter_updated']='Error'
         try {
-          const updatedObj = processMigration(JSON.parse(rawFilterColumn));
-          row['raw_filter_updated'] = JSON.stringify(updatedObj);
+            const parsedData = rawFilterColumn.charAt(rawFilterColumn.length - 1) === ']'? JSON.parse(rawFilterColumn) : 'error'
+            const updatedObj = processMigration(parsedData);
+            row['raw_filter_updated'] = JSON.stringify(updatedObj);
+            records.push(row);
         } catch (error) {
-          row['raw_filter_updated'] = "0";
+          console.log('error', row);
+          records.push({...row});
         }      
-        records.push(row);
+        
       })
       .on('end', () => {
         resolve(records);
