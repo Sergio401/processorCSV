@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "csv": "node src/csvProcessor.js",
+    "json": "node src/convertJsonToCSV.js",
     "csvOnlySql": "node src/csvProcessorOnlySQl.js",
     "modifyRawFilter": "node src/rawFilterUpdated.js",
     "updateRawFilter": "node src/updateRawFilter.js"

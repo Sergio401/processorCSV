@@ -30,7 +30,7 @@ const addNewFields = (item,finalProperties) => {
       }
  
       if (!item.hasOwnProperty('InputForEquipmentId')) {
-        item.InputForEquipmentId = "124554051601"; // Valor por defecto
+        item.InputForEquipmentId = "124554051600"; // Valor por defecto
       }
       return item;
 }
@@ -39,13 +39,7 @@ const addNewFields = (item,finalProperties) => {
 export const processMigration = (data, finalProperties) => {
     try {
         let stringifiedData = JSON.stringify(data);
-
-        console.log(stringifiedData.charAt(stringifiedData.length - 1));
-        if (stringifiedData.charAt(stringifiedData.length - 1) !== ']') {
-            console.log('ERROR');
-            
-            return ["ERROR"]
-        }
+        let equipmentTypes = {}
 
         let parsedData = JSON.parse(stringifiedData);
         const processItem = (item) => {
@@ -61,8 +55,6 @@ export const processMigration = (data, finalProperties) => {
                     }
                   }
                   return item
-                
-                
             } else {
                 return item
             }
@@ -119,3 +111,43 @@ export const processValidationSNMP = (data) => {
     }
 
 }
+
+
+
+export const extractEquipmentTypes = (data) => {
+    
+    try {
+        let stringifiedData = JSON.stringify(data);
+        let equipmentTypes = {}
+        let parsedData = JSON.parse(stringifiedData);
+        
+        const processItem = (item) => {
+            if (typeof item === 'object') { 
+                if(item?.name === 'equipmentProperty') {
+                    const rawFilterWithOutPropertiesOption = deletePropertiesOption(item);  
+                    equipmentTypes[item.inputForEquipment] = item.inputForEquipment
+                    console.log('rawFilterWithParentRule', item.inputForEquipment);
+                    
+                    return rawFilterWithOutPropertiesOption
+                }
+                for (let key in item) {
+                    if (item.hasOwnProperty(key)) {
+                        item[key] = processItem(item[key]);
+                    }
+                  }
+                  return Object.keys(equipmentTypes)
+            } else {
+                return item
+            }
+           
+        }
+        
+        return processItem(parsedData);
+
+    } catch (error) {
+        console.error("Error al parsear los datos:", error);
+        return null;
+    }
+
+}
+

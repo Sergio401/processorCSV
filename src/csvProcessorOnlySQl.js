@@ -40,6 +40,8 @@ const readCSV = async () => {
 };
 
 const writeCSV = async (records) => {
+  console.log('records',records );
+  
   // Filtrar solo la columna sql_sentence
   const filteredRecords = records.map(record => ({ sql_sentence: record.sql_sentence }));
 
